@@ -1,286 +1,188 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>¡Denuncia tus banquetas!</title>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Denuncia de Banquetas</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;700&display=swap" rel="stylesheet"/>
   <style>
-    :root {
-      --orange: #F26623;
-      --black: #000;
-      --bg: #f9f9f9;
-      --panel: #fff;
-      --text-dark: #333;
-      --text-light: #555;
-      --border: #DDD;
-      --accent: #006644;
+    body { font-family:'Montserrat',sans-serif; background:#f9f9f9; margin:0; padding:1rem; display:flex; justify-content:center; align-items:flex-start; }
+    .form-container, .success-container {
+      width:100%; max-width:360px; background:#fff; border-radius:16px; box-shadow:0 8px 24px rgba(0,0,0,0.1);
+      padding:1.5rem; position:relative; transition:filter .3s ease;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      background: var(--bg);
-      font-family: 'Montserrat', sans-serif;
-      display: flex; justify-content: center; align-items: center;
-      min-height: 100vh;
+    .form-container.blurred { filter:blur(4px); }
+    h1 { font-weight:700; font-size:1.6rem; color:#F26623; text-align:center; margin:0 0 .5rem; }
+    .subtitle { text-align:center; color:#555; font-weight:300; font-size:.9rem; margin:0 0 1rem; }
+    .tagline  { text-align:center; color:#AAA; font-style:italic; font-size:.8rem; margin-bottom:1.2rem; }
+    label { display:block; font-weight:700; color:#333; margin-top:1rem; margin-bottom:.3rem; font-size:.9rem; }
+    input, select, textarea {
+      width:100%; padding:.7rem; border:1px solid #DDD; border-radius:12px; font-size:.95rem;
+      background:#FAFAFA; box-sizing:border-box;
     }
-    .panel {
-      width: 100%; max-width: 400px;
-      background: var(--panel);
-      border-radius: 20px;
-      padding: 1.5rem;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
-      position: relative;
-      overflow: hidden;
-    }
-    h1 {
-      font-size: 1.8rem;
-      color: var(--orange);
-      text-align: center;
-      margin-bottom: 0.5rem;
-      font-weight: 700;
-    }
-    .subtitle {
-      font-size: 0.95rem;
-      color: var(--text-light);
-      text-align: center;
-      margin-bottom: 0.75rem;
-    }
-    .tagline {
-      font-size: 0.85rem;
-      color: #AAA;
-      text-align: center;
-      font-style: italic;
-      margin-bottom: 1.5rem;
-    }
-    label {
-      display: block;
-      font-weight: 700;
-      color: var(--text-dark);
-      margin-top: 1rem;
-      margin-bottom: 0.3rem;
-      font-size: 0.9rem;
-    }
-    input[type="text"], select, textarea, input[type="file"] {
-      width: 100%;
-      padding: 0.7rem;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      background: #FAFAFA;
-      font-size: 0.95rem;
-      margin-bottom: 0.5rem;
-    }
-    textarea { resize: vertical; min-height: 80px; }
+    textarea { resize:vertical; height:4rem; }
     .btn {
-      width: 100%;
-      padding: 1rem;
-      font-weight: bold;
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
-      font-size: 1rem;
-      margin-top: 1rem;
-      transition: background 0.3s ease;
+      width:100%; padding:1rem; font-weight:700; font-size:1rem; border:none; border-radius:12px;
+      margin-top:1rem; cursor:pointer; transition:background .3s ease;
     }
-    .btn-location, .btn-submit {
-      background: var(--black);
-      color: var(--orange);
-    }
-    .btn-location:hover, .btn-submit:hover {
-      background: var(--orange);
-      color: var(--black);
-    }
+    .btn-location, .btn-submit { background:#000; color:#F26623; }
+    .btn-location:hover, .btn-submit:hover { background:#111; }
     .progress-bar {
-      width: 100%; height: 8px;
-      background: #EEE;
-      border-radius: 10px;
-      overflow: hidden;
-      margin: 0.5rem 0;
+      width:100%; height:8px; background:#EEE; border-radius:10px; overflow:hidden; margin-top:.5rem;
     }
-    .progress-fill {
-      height: 100%;
-      width: 0%;
-      background: var(--orange);
-      transition: width 0.4s ease;
+    .progress-bar > div {
+      height:100%; width:0%; background:#F26623; transition:width .3s ease;
     }
     .overlay {
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(255,255,255,0.8);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      font-size: 1.2rem;
-      color: var(--text-dark);
-      backdrop-filter: blur(4px);
-      z-index: 10;
+      position:absolute; top:0; left:0; right:0; bottom:0;
+      background:rgba(255,255,255,.8); display:flex; justify-content:center; align-items:center;
+      font-size:1.2rem; font-weight:600; color:#333; border-radius:16px;
     }
-    .overlay.show { display: flex; }
-    .spinner {
-      border: 4px solid #EEE;
-      border-top: 4px solid var(--orange);
-      border-radius: 50%;
-      width: 40px; height: 40px;
-      margin-bottom: 1rem;
-      animation: spin 1s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .success-container {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      padding: 2rem 1rem;
-    }
-    .success-container.show { display: flex; }
-    .success-container img {
-      width: 128px; height: 128px;
-      margin-bottom: 1rem;
-    }
-    .success-container h2 {
-      font-size: 1.6rem;
-      color: var(--orange);
-      margin-bottom: 0.5rem;
-    }
-    .success-container p {
-      font-size: 1rem;
-      color: var(--text-dark);
-      margin-bottom: 1.25rem;
-    }
-    .btn-share {
-      background: var(--accent);
-      color: #FFF;
-    }
-    .btn-share:hover {
-      background: #05553b;
-    }
+    .success-container { text-align:center; display:none; }
+    .success-container.active { display:block; }
+    .success-container img { width:64px; margin-bottom:1rem; }
+    .btn-share { margin-top:1rem; background:#0A6C44; color:#FFF; }
   </style>
 </head>
 <body>
-  <div class="panel">
-    <form id="banquetaForm" enctype="multipart/form-data" autocomplete="off">
-      <h1>¡Denuncia tus banquetas!</h1>
-      <div class="subtitle">Reporta las banquetas obstruidas, mal diseñadas y que ponen en peligro a la gente</div>
-      <div class="tagline">Una herramienta de Vanguardia MX impulsada con IA.</div>
 
-      <label>Ubicación de la banqueta</label>
-      <input type="text" name="ubicacion" id="ubicacion" placeholder="Toca el botón para compartir ubicación" readonly />
-      <button type="button" class="btn btn-location" id="locBtn">📍 Compartir ubicación</button>
+  <div class="form-container" id="formEl">
+    <h1>¡Denuncia tus banquetas!</h1>
+    <p class="subtitle">Reporta las banquetas obstruidas, mal diseñadas y que ponen en peligro a la gente</p>
+    <p class="tagline">Una herramienta de Vanguardia MX impulsada con IA.</p>
 
-      <label>Foto del lugar</label>
-      <input type="file" name="foto" id="foto" accept="image/*" />
-      <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+    <label>Ubicación de la banqueta</label>
+    <input type="text" id="ubicInput" placeholder="Toca el botón para compartir ubicación" readonly/>
 
-      <label>Categoría</label>
-      <select name="categoria" id="categoria">
-        <option value="" disabled selected>Selecciona</option>
-        <option value="No hay banqueta">No hay banqueta</option>
-        <option value="Está cubierta de maleza">Está cubierta de maleza</option>
-        <option value="Hay escombro en la banqueta">Hay escombro en la banqueta</option>
-        <option value="Un auto interrumpe la banqueta">Un auto interrumpe la banqueta</option>
-        <option value="No hay rampas">No hay rampas</option>
-        <option value="Desnivel">Desnivel</option>
-        <option value="Hay un cadáver en la banqueta">Hay un cadáver en la banqueta</option>
-        <option value="Está llena de indiferencia">Está llena de indiferencia</option>
-      </select>
+    <button class="btn btn-location" id="locBtn">📍 Compartir ubicación</button>
 
-      <label>¿Cuánto tiempo lleva así?</label>
-      <select name="tiempo" id="tiempo">
-        <option value="" disabled selected>Selecciona</option>
-        <option value="Unos días">Unos días</option>
-        <option value="1 a 3 meses">1 a 3 meses</option>
-        <option value="6 meses">6 meses</option>
-        <option value="1 año">1 año</option>
-        <option value="3 años">3 años</option>
-        <option value="5 años">5 años</option>
-        <option value="10 años">10 años</option>
-        <option value="+10 años">+10 años</option>
-      </select>
+    <label>Foto del lugar</label>
+    <input type="file" id="fileInput" accept="image/*"/>
 
-      <button type="submit" class="btn btn-submit" id="submitBtn">Enviar reporte</button>
-    </form>
+    <div class="progress-bar"><div id="bar"></div></div>
 
-    <div class="overlay" id="overlay">
-      <div class="spinner"></div>
-      Enviando...
-    </div>
+    <label>Categoría</label>
+    <select id="catSelect">
+      <option value="">Selecciona</option>
+      <option value="No hay banqueta">No hay banqueta</option>
+      <option value="Está cubierta de maleza">Está cubierta de maleza</option>
+      <option value="Hay escombro en la banqueta">Hay escombro en la banqueta</option>
+      <option value="Un auto interrumpe la banqueta">Un auto interrumpe la banqueta</option>
+      <option value="No hay rampas">No hay rampas</option>
+      <option value="Desnivel">Desnivel</option>
+      <option value="Hay un cadáver en la banqueta">Hay un cadáver en la banqueta</option>
+      <option value="Está llena de indiferencia">Está llena de indiferencia</option>
+    </select>
 
-    <div class="success-container" id="success">
-      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIwAAACMCAMAAACZ...==" alt="Peatón caminando" />
-      <h2>Denuncia completa</h2>
-      <p>Tu aporte construye una mejor comunidad.</p>
-      <button class="btn btn-share" id="shareBtn">Invita a otros a denunciar</button>
-    </div>
+    <label>¿Cuánto tiempo lleva así?</label>
+    <select id="timeSelect">
+      <option value="">Selecciona</option>
+      <option>Unos días</option>
+      <option>1 a 3 meses</option>
+      <option>6 meses</option>
+      <option>1 año</option>
+      <option>3 años</option>
+      <option>5 años</option>
+      <option>10 años</option>
+      <option>+10 años</option>
+    </select>
+
+    <button class="btn btn-submit" id="sendBtn">Enviar reporte</button>
+
+    <div class="overlay" id="sending" style="display:none;">Enviando…</div>
   </div>
 
-  <script>
-    const locBtn   = document.getElementById('locBtn');
-    const ubicInput= document.getElementById('ubicacion');
-    const fotoInput= document.getElementById('foto');
-    const categoria = document.getElementById('categoria');
-    const tiempo = document.getElementById('tiempo');
-    const form     = document.getElementById('banquetaForm');
-    const overlay  = document.getElementById('overlay');
-    const success  = document.getElementById('success');
-    const shareBtn = document.getElementById('shareBtn');
-    const progress = document.getElementById('progress');
+  <div class="success-container" id="successEl">
+    <img src="Peatón_para_imagen.png" alt="peatón caminando"/>
+    <h1>Denuncia completa</h1>
+    <p>Tu aporte construye una mejor comunidad.</p>
+    <button class="btn btn-share" id="shareBtn">Invita a otros a denunciar</button>
+  </div>
 
-    locBtn.addEventListener('click', () => {
-      if (!navigator.geolocation) {
-        alert('Geolocalización no soportada');
-        return;
-      }
-      navigator.geolocation.getCurrentPosition(
-        ({ coords }) => {
-          ubicInput.value = coords.latitude.toFixed(6) + ',' + coords.longitude.toFixed(6);
-        },
-        () => alert('Permiso de ubicación denegado')
-      );
-    });
+<script>
+const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxW7TsOgac22gVHhEIHxJ9crScp3sfo7CrLB1N3ll2ZVIw4_Kt9lUSyF0NtyQZhWrS4/exec';
 
-    fotoInput.addEventListener('change', () => {
-      const file = fotoInput.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onprogress = e => {
-        const pct = Math.round((e.loaded / e.total) * 100);
-        progress.style.width = pct + '%';
-      };
-      reader.onloadend = () => {
-        progress.style.width = '100%';
-        setTimeout(() => {
-          progress.parentElement.innerHTML = 
-            '<div style="text-align:center; margin:1rem 0; font-size:2rem; color:var(--orange)">✔️</div>';
-        }, 300);
-      };
-      reader.readAsArrayBuffer(file);
-    });
+let fotoBase64 = '', fotoName='', fotoType='';
 
-    form.addEventListener('submit', async e => {
-      e.preventDefault();
-      if (!ubicInput.value || !fotoInput.files.length || !categoria.value || !tiempo.value) {
-        alert('Completa todos los campos antes de enviar');
-        return;
-      }
-      overlay.classList.add('show');
-      const data = new FormData(form);
-      try {
-        await fetch('https://script.google.com/macros/s/AKfycbxW7TsOgac22gVHhEIHxJ9crScp3sfo7CrLB1N3ll2ZVIw4_Kt9lUSyF0NtyQZhWrS4/exec', {
-          method: 'POST', body: data, mode: 'no-cors'
-        });
-        form.style.display = 'none';
-        overlay.classList.remove('show');
-        success.classList.add('show');
-      } catch (err) {
-        overlay.classList.remove('show');
-        alert('Error al enviar. Intenta de nuevo.');
-      }
-    });
+// 1) Geolocalización
+document.getElementById('locBtn').onclick = () => {
+  navigator.geolocation.getCurrentPosition(pos => {
+    const {latitude, longitude} = pos.coords;
+    document.getElementById('ubicInput').value = `${latitude.toFixed(6)},${longitude.toFixed(6)}`;
+  }, ()=> alert('Permiso denegado para ubicación.'));
+};
 
-    shareBtn.addEventListener('click', () => {
-      const url = encodeURIComponent(window.location.href);
-      window.open(`https://wa.me/?text=¡Denuncia tus banquetas! ${url}`, '_blank');
+// 2) Procesar archivo a Base64
+document.getElementById('fileInput').addEventListener('change', e=>{
+  const file = e.target.files[0];
+  if (!file) return;
+  fotoName = file.name;
+  fotoType = file.type;
+  const reader = new FileReader();
+  reader.onprogress = ev => {
+    if (ev.lengthComputable) {
+      const pct = Math.round(ev.loaded/ev.total*100);
+      document.getElementById('bar').style.width = pct+'%';
+    }
+  };
+  reader.onloadend = () => {
+    fotoBase64 = reader.result.split(',')[1];
+    // al 100% convertir la barra en check:
+    document.getElementById('bar').style.width = '100%';
+    document.getElementById('bar').innerHTML = '✔️';
+  };
+  reader.readAsDataURL(file);
+});
+
+// 3) Enviar
+document.getElementById('sendBtn').onclick = async ()=>{
+  // Validar
+  const ubic = document.getElementById('ubicInput').value;
+  const cat  = document.getElementById('catSelect').value;
+  const time = document.getElementById('timeSelect').value;
+  if (!ubic||!fotoBase64||!cat||!time) {
+    return alert('Completa todos los campos antes de enviar.');
+  }
+
+  // Mostrar overlay
+  document.getElementById('sending').style.display = 'flex';
+  document.getElementById('formEl').classList.add('blurred');
+
+  // Preparar payload x-www-form-urlencoded
+  const body = new URLSearchParams({
+    ubicacion: ubic,
+    categoria: cat,
+    tiempo: time,
+    foto: fotoBase64,
+    'foto.name': fotoName,
+    'foto.type': fotoType
+  });
+
+  try {
+    const res = await fetch(WEB_APP_URL, {
+      method:'POST',
+      headers:{ 'Content-Type':'application/x-www-form-urlencoded' },
+      body
     });
-  </script>
+    await res.text(); // ignora el texto
+    // Mostrar pantalla final
+    document.getElementById('formEl').style.display = 'none';
+    document.getElementById('successEl').classList.add('active');
+
+  } catch(err) {
+    alert('Error al enviar: '+err);
+    document.getElementById('sending').style.display = 'none';
+    document.getElementById('formEl').classList.remove('blurred');
+  }
+};
+
+// 4) Compartir por WhatsApp
+document.getElementById('shareBtn').onclick = ()=>{
+  const whatsappUrl = 
+    'https://api.whatsapp.com/send?text=' +
+    encodeURIComponent('¡Ayúdame a denunciar banquetas peligrosas! 🚶‍♂️\n' + location.href);
+  window.open(whatsappUrl,'_blank');
+};
+</script>
 </body>
 </html>
